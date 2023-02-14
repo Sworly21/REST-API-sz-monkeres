@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Render } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Render,
+} from '@nestjs/common';
 import { isDefined } from 'class-validator';
 import { DataSource } from 'typeorm';
 import { AppService } from './app.service';
@@ -18,12 +26,24 @@ export class AppController {
     return { message: 'Welcome to the homepage' };
   }
 
-  @Post('/register')
+  @Post('/villanybojler')
   async newVillanybojler(@Body() bojler: newBojlerDto) {
     isDefined(bojler.price);
 
     const villanybojlerRepo = this.dataSource.getRepository(Villanybojler);
     await villanybojlerRepo.save(bojler);
     return bojler;
+  }
+
+  @Delete('/villanybojler/:id')
+  deletBojler(@Param('id') id: number) {
+    const villanybojlerRepo = this.dataSource.getRepository(Villanybojler);
+    villanybojlerRepo.delete(id);
+  }
+
+  @Get('/villanybojler')
+  allbojler() {
+    const villanybojlerRepo = this.dataSource.getRepository(Villanybojler);
+    return villanybojlerRepo.find();
   }
 }
